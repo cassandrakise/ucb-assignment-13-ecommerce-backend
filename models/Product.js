@@ -41,8 +41,6 @@ Product.init(
         key: "id"
       }
     },
-    
-
 
   },
   {

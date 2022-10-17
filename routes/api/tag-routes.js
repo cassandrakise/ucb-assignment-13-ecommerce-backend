@@ -1,21 +1,17 @@
 const router = require('express').Router();
 const { Tag, Product, ProductTag } = require('../../models');
 
-// The `/api/tags` endpoint
-
-// find all tags
-// be sure to include its associated Product data
+// be sure to include its associated Product data --> change from .then
 router.get('/', async (req, res) => {
-  Tag.findAll({
-    include: [ProductTag]
-  }).then((tags) => {
-    res.json(tags)
-  
-  }).catch((err) => {
-    res.status(404).json({ message: "No tag found!" });
-    return;
-  })
-});
+  try{
+    const tagData = await Tag.findAll({
+      include: [{model: Category}, {model: ProductTag, through: Tag}]
+    });
+    res.status(200).json(productData);
+  } catch (err){
+    res.status(500).json(err);
+  }
+}); 
 
 // find a single tag by its `id`
 // be sure to include its associated Product data

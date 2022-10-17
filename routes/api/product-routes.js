@@ -3,26 +3,20 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // question for sherri in morning -- how to tie in Category?
 
-// The `/api/products` endpoint
-
-// get all products
-// find all products
-// be sure to include its associated HELP Category HELP and Tag data
+// find all products, includes category and tags info
 router.get('/', async (req, res) => {
-  Product.findAll({
-    include: [Tag] 
-  }).then((products) => {
-    res.json(products)
-  
-  }).catch((err) => {
-    res.status(404).json({ message: "No products found!"});
-    return;
-  })
-}); // where to include category data???
+  try{
+    const productData = await Product.findAll({
+    include: [{model: Category}, {model: Tag, through: ProductTag}] 
+  });
+    res.status(200).json(productData);
+  } catch (err){
+    res.status(500).json(err);
+  }
+}); 
 
-// get one product
-// find a single product by its `id`
-// be sure to include its associated HELP Category HELP and Tag data
+
+// find a single product by its `id` and includes its Category and Tag data
 router.get('/:id', async (req, res) => {
   try {
     const productData = await Product.findByPk(req.params.id, {
@@ -40,7 +34,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// create new product -- THIS IS ONE THAT I NEED HELP WITH
+// create new product
 router.post('/', async (req, res) => {
   /* req.body should look like this...
     {
